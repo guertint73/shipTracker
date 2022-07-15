@@ -1,1 +1,1 @@
-web: pipenv run python src/server.py
+web: gunicorn src/server:app
