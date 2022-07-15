@@ -18,9 +18,9 @@ def health():
                     mimetype='application/json')
 
 
-@app.route('/freighters', methods=['GET'])
-def get_all_freighters():
-    all_freighters = ShipService.get_all_freighters_from_boatnerd()
+@app.route('/freighters/destination/<port>', methods=['GET'])
+def get_all_freighters(port):
+    all_freighters = ShipService.get_all_freighters_from_boatnerd(port=port)
     return Response(response=json.dumps(all_freighters),
                     status=200,
                     mimetype='application/json')

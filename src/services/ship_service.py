@@ -25,12 +25,12 @@ def make_api_call(method, url, expected_code=200, timeout=60):
         if res.status_code != expected_code:
             return
         else:
-            logging.info(f'Successfully completed the {method} call to url: {url}.')
+            logging.info(f'Successfully completed the {method} '
+                         f'call to url: {url}.')
             return res_json
 
 
-
-def get_all_freighters_from_boatnerd():
+def get_all_freighters_from_boatnerd(port):
     """Get all vessels from Boatnerd."""
     all_freighters = {
         'freighters': {}
@@ -41,21 +41,25 @@ def get_all_freighters_from_boatnerd():
     for feature in features:
         vessel = feature.get('properties')
         if not vessel:
-            return 
-        
+            return
+
         if vessel.get('vesselType') == Constants.freighter:
+            vessel_status = vessel.get('status')
+            vessel_destination = vessel.get('destination')
             freighter = {
                 'name': vessel.get('name'),
-                'destination': vessel.get('destination'),
+                'status': vessel_status,
+                'eta': vessel.get('eta'),
+                'destination': vessel_destination,
                 'speed': vessel.get('speed'),
                 'length': vessel.get('length'),
                 'width': vessel.get('width'),
                 'draft': vessel.get('draft')
             }
-            vessel_status = vessel.get('status')
-            if vessel_status in all_freighters['freighters'].keys():
-                all_freighters['freighters'][vessel_status].append(freighter)
-            else:
-                all_freighters['freighters'][vessel_status] = [freighter]
-    
+            if vessel_destination and vessel_destination.lower() == port.lower():
+                if vessel_status in all_freighters['freighters'].keys():
+                    all_freighters['freighters'][vessel_status].append(freighter)
+                else:
+                    all_freighters['freighters'][vessel_status] = [freighter]
+
     return all_freighters
